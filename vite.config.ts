@@ -23,5 +23,5 @@ export default defineConfig(({ mode }) => ({
   build: {
     outDir: 'docs',
   },
-  base: './',
+  base: '/arithmetic-flash-friend/',
 }));
