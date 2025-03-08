@@ -102,7 +102,7 @@ const ArithmeticApp: React.FC = () => {
   return (
     <div className="w-full max-w-4xl mx-auto px-4 py-8 md:py-12">
       <header className="text-center mb-10">
-        <h1 className="text-3xl md:text-4xl font-bold mb-2">Arithmetic Practice</h1>
+        <h1 className="text-3xl md:text-4xl font-bold mb-2">Kira's Math Practice</h1>
         <p className="text-muted-foreground">Improve your mental math skills with flashcards</p>
       </header>
       
