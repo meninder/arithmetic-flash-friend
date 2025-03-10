@@ -82,8 +82,8 @@ const Flashcard: React.FC<FlashcardProps> = ({
 
   return (
     <div className="w-full max-w-md mx-auto">
-      <div className="flex items-center justify-between w-full mb-6">
-        {/* Navigation Controls - Now on sides of the card */}
+      <div className="flex items-center justify-center gap-4 w-full mb-6">
+        {/* Navigation Controls on the sides of the card */}
         <button
           onClick={handlePrevious}
           disabled={!canGoPrevious}
@@ -96,6 +96,43 @@ const Flashcard: React.FC<FlashcardProps> = ({
           <span className="hidden sm:inline">Previous</span>
         </button>
         
+        <div 
+          className={cn("card-flip-container aspect-[4/3] w-full", hasAnswered && "pointer-events-none")}
+          onClick={handleFlip}
+        >
+          <div className={cn("card-flip w-full h-full", isFlipped && "flipped")}>
+            {/* Card Front */}
+            <div className="card-front w-full h-full">
+              <div className="glass w-full h-full rounded-2xl shadow-soft p-8 flex flex-col items-center justify-center cursor-pointer select-none">
+                <div className="text-4xl md:text-6xl font-bold mb-4 text-foreground">
+                  {question.questionText}
+                </div>
+                
+                {!hasAnswered && (
+                  <div className="text-sm text-muted-foreground mt-2">
+                    {isFlipped ? "Tap to see question" : "Tap to see answer"}
+                  </div>
+                )}
+              </div>
+            </div>
+            
+            {/* Card Back */}
+            <div className="card-back w-full h-full">
+              <div className="glass w-full h-full rounded-2xl shadow-soft p-8 flex flex-col items-center justify-center cursor-pointer select-none">
+                <div className="text-4xl md:text-6xl font-bold mb-4 text-foreground">
+                  {question.answerText}
+                </div>
+                
+                {!hasAnswered && (
+                  <div className="text-sm text-muted-foreground mt-2">
+                    Tap to see question
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
+        </div>
+        
         <button
           onClick={handleNext}
           disabled={!canGoNext || !hasAnswered}
@@ -107,43 +144,6 @@ const Flashcard: React.FC<FlashcardProps> = ({
           <span className="hidden sm:inline">Next</span>
           <ArrowRight className="w-4 h-4" />
         </button>
-      </div>
-      
-      <div 
-        className={cn("card-flip-container aspect-[4/3] w-full", hasAnswered && "pointer-events-none")}
-        onClick={handleFlip}
-      >
-        <div className={cn("card-flip w-full h-full", isFlipped && "flipped")}>
-          {/* Card Front */}
-          <div className="card-front w-full h-full">
-            <div className="glass w-full h-full rounded-2xl shadow-soft p-8 flex flex-col items-center justify-center cursor-pointer select-none">
-              <div className="text-4xl md:text-6xl font-bold mb-4 text-foreground">
-                {question.questionText}
-              </div>
-              
-              {!hasAnswered && (
-                <div className="text-sm text-muted-foreground mt-2">
-                  {isFlipped ? "Tap to see question" : "Tap to see answer"}
-                </div>
-              )}
-            </div>
-          </div>
-          
-          {/* Card Back */}
-          <div className="card-back w-full h-full">
-            <div className="glass w-full h-full rounded-2xl shadow-soft p-8 flex flex-col items-center justify-center cursor-pointer select-none">
-              <div className="text-4xl md:text-6xl font-bold mb-4 text-foreground">
-                {question.answerText}
-              </div>
-              
-              {!hasAnswered && (
-                <div className="text-sm text-muted-foreground mt-2">
-                  Tap to see question
-                </div>
-              )}
-            </div>
-          </div>
-        </div>
       </div>
 
       {/* Answer Input Form */}
