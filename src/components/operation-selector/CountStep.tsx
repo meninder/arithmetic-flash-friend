@@ -21,7 +21,7 @@ const CountStep: React.FC<CountStepProps> = ({
         <div className="text-center text-4xl font-bold mb-6">{count}</div>
         <input
           type="range"
-          min="5"
+          min="1"
           max="50"
           step="1"
           value={count}
@@ -29,7 +29,7 @@ const CountStep: React.FC<CountStepProps> = ({
           className="w-full accent-primary"
         />
         <div className="flex justify-between text-sm text-muted-foreground">
-          <span>5</span>
+          <span>1</span>
           <span>15</span>
           <span>30</span>
           <span>50</span>
