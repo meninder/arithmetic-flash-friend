@@ -18,12 +18,6 @@ const CountStep: React.FC<CountStepProps> = ({
         How many questions?
       </h2>
       <div className="flex flex-col space-y-4">
-        <div className="w-full bg-secondary rounded-full h-1.5 mb-6">
-          <div 
-            className="h-full bg-primary rounded-full transition-all duration-300"
-            style={{ width: `${(count / 50) * 100}%` }}
-          ></div>
-        </div>
         <div className="text-center text-4xl font-bold mb-6">{count}</div>
         <input
           type="range"
