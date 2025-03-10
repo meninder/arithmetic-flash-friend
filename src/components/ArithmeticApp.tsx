@@ -4,11 +4,13 @@ import { useToast } from '@/hooks/use-toast';
 import OptionSelector from './OptionSelector';
 import Flashcard from './Flashcard';
 import ProgressBar from './ProgressBar';
+import ScoreDisplay from './ScoreDisplay';
+import SummaryScreen from './SummaryScreen';
 import { generateQuestions, Operation, Difficulty, ArithmeticQuestion } from '@/utils/arithmeticUtils';
 
 const ArithmeticApp: React.FC = () => {
   const { toast } = useToast();
-  const [step, setStep] = useState<'setup' | 'practice'>('setup');
+  const [step, setStep] = useState<'setup' | 'practice' | 'summary'>('setup');
   const [setupStep, setSetupStep] = useState<'operation' | 'difficulty' | 'count'>('operation');
   const [selectedOperation, setSelectedOperation] = useState<Operation | null>(null);
   const [selectedDifficulty, setSelectedDifficulty] = useState<Difficulty | null>(null);
@@ -16,11 +18,22 @@ const ArithmeticApp: React.FC = () => {
   const [questions, setQuestions] = useState<ArithmeticQuestion[]>([]);
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState<number>(0);
   const [isInitialLoad, setIsInitialLoad] = useState(true);
+  const [correctAnswers, setCorrectAnswers] = useState(0);
+  const [attemptedQuestions, setAttemptedQuestions] = useState(0);
+  const [isNewQuestion, setIsNewQuestion] = useState(true);
 
   useEffect(() => {
     // Set initial load to false after first render
     setIsInitialLoad(false);
   }, []);
+
+  useEffect(() => {
+    setIsNewQuestion(true);
+    const timer = setTimeout(() => {
+      setIsNewQuestion(false);
+    }, 100);
+    return () => clearTimeout(timer);
+  }, [currentQuestionIndex]);
 
   const handleSelectOperation = (operation: Operation) => {
     setSelectedOperation(operation);
@@ -55,6 +68,8 @@ const ArithmeticApp: React.FC = () => {
 
     setQuestions(generatedQuestions);
     setCurrentQuestionIndex(0);
+    setCorrectAnswers(0);
+    setAttemptedQuestions(0);
     setStep('practice');
 
     toast({
@@ -68,6 +83,7 @@ const ArithmeticApp: React.FC = () => {
       setCurrentQuestionIndex(prev => prev + 1);
     } else {
       // Last question completed
+      setStep('summary');
       toast({
         title: "Practice completed!",
         description: "Great job! You've completed all the questions.",
@@ -81,6 +97,15 @@ const ArithmeticApp: React.FC = () => {
     }
   };
 
+  const handleCorrectAnswer = () => {
+    setCorrectAnswers(prev => prev + 1);
+    setAttemptedQuestions(prev => prev + 1);
+  };
+
+  const handleWrongAnswer = () => {
+    setAttemptedQuestions(prev => prev + 1);
+  };
+
   const handleReset = () => {
     setStep('setup');
     setSetupStep('operation');
@@ -89,6 +114,24 @@ const ArithmeticApp: React.FC = () => {
     setQuestionCount(10);
     setQuestions([]);
     setCurrentQuestionIndex(0);
+    setCorrectAnswers(0);
+    setAttemptedQuestions(0);
+  };
+
+  const getOperationDisplayName = (op: Operation | null): string => {
+    if (!op) return "";
+    switch (op) {
+      case 'addition': return 'Addition';
+      case 'subtraction': return 'Subtraction';
+      case 'multiplication': return 'Multiplication';
+      case 'division': return 'Division';
+      case 'all': return 'Mixed Operations';
+    }
+  };
+
+  const getDifficultyDisplayName = (diff: Difficulty | null): string => {
+    if (!diff) return "";
+    return diff.charAt(0).toUpperCase() + diff.slice(1);
   };
 
   const setupClasses = isInitialLoad 
@@ -106,7 +149,7 @@ const ArithmeticApp: React.FC = () => {
         <p className="text-muted-foreground">Improve your mental math skills with flashcards</p>
       </header>
       
-      {step === 'setup' ? (
+      {step === 'setup' && (
         <div className={setupClasses}>
           <OptionSelector
             step={setupStep}
@@ -119,9 +162,16 @@ const ArithmeticApp: React.FC = () => {
             onStart={handleStartPractice}
           />
         </div>
-      ) : (
+      )}
+
+      {step === 'practice' && (
         <div className={practiceClasses}>
           <div className="mb-8">
+            <ScoreDisplay 
+              correct={correctAnswers} 
+              total={attemptedQuestions} 
+            />
+            
             <ProgressBar
               current={currentQuestionIndex + 1}
               total={questions.length}
@@ -135,6 +185,9 @@ const ArithmeticApp: React.FC = () => {
                 onPrevious={handlePreviousQuestion}
                 canGoNext={currentQuestionIndex < questions.length - 1}
                 canGoPrevious={currentQuestionIndex > 0}
+                onCorrectAnswer={handleCorrectAnswer}
+                onWrongAnswer={handleWrongAnswer}
+                isNewQuestion={isNewQuestion}
               />
             )}
           </div>
@@ -147,6 +200,18 @@ const ArithmeticApp: React.FC = () => {
               Reset and start over
             </button>
           </div>
+        </div>
+      )}
+
+      {step === 'summary' && (
+        <div className="animate-scale-up">
+          <SummaryScreen
+            correctAnswers={correctAnswers}
+            totalQuestions={questions.length}
+            operation={getOperationDisplayName(selectedOperation)}
+            difficulty={getDifficultyDisplayName(selectedDifficulty)}
+            onReset={handleReset}
+          />
         </div>
       )}
     </div>

@@ -3,6 +3,7 @@ import React, { useState, useEffect } from 'react';
 import { cn } from '@/lib/utils';
 import { ArithmeticQuestion } from '@/utils/arithmeticUtils';
 import { ArrowRight, ArrowLeft } from 'lucide-react';
+import AnswerInput from './AnswerInput';
 
 interface FlashcardProps {
   question: ArithmeticQuestion;
@@ -10,6 +11,9 @@ interface FlashcardProps {
   onPrevious: () => void;
   canGoNext: boolean;
   canGoPrevious: boolean;
+  onCorrectAnswer: () => void;
+  onWrongAnswer: () => void;
+  isNewQuestion: boolean;
 }
 
 const Flashcard: React.FC<FlashcardProps> = ({
@@ -17,18 +21,23 @@ const Flashcard: React.FC<FlashcardProps> = ({
   onNext,
   onPrevious,
   canGoNext,
-  canGoPrevious
+  canGoPrevious,
+  onCorrectAnswer,
+  onWrongAnswer,
+  isNewQuestion
 }) => {
   const [isFlipped, setIsFlipped] = useState(false);
   const [isAnimating, setIsAnimating] = useState(false);
+  const [hasAnswered, setHasAnswered] = useState(false);
 
-  // Reset flip state when question changes
+  // Reset state when question changes
   useEffect(() => {
     setIsFlipped(false);
+    setHasAnswered(false);
   }, [question]);
 
   const handleFlip = () => {
-    if (!isAnimating) {
+    if (!isAnimating && !hasAnswered) {
       setIsAnimating(true);
       setIsFlipped(!isFlipped);
       setTimeout(() => setIsAnimating(false), 600); // Match animation duration
@@ -59,10 +68,14 @@ const Flashcard: React.FC<FlashcardProps> = ({
     }
   };
 
+  const handleAnswerSubmit = () => {
+    setHasAnswered(true);
+  };
+
   return (
     <div className="w-full max-w-md mx-auto">
       <div 
-        className="card-flip-container aspect-[4/3] w-full"
+        className={cn("card-flip-container aspect-[4/3] w-full", hasAnswered && "pointer-events-none")}
         onClick={handleFlip}
       >
         <div className={cn("card-flip w-full h-full", isFlipped && "flipped")}>
@@ -72,9 +85,12 @@ const Flashcard: React.FC<FlashcardProps> = ({
               <div className="text-4xl md:text-6xl font-bold mb-4 text-foreground">
                 {question.questionText}
               </div>
-              <div className="text-sm text-muted-foreground mt-2">
-                Tap to reveal answer
-              </div>
+              
+              {!hasAnswered && (
+                <div className="text-sm text-muted-foreground mt-2">
+                  {isFlipped ? "Tap to see question" : "Tap to see answer"}
+                </div>
+              )}
             </div>
           </div>
           
@@ -84,13 +100,25 @@ const Flashcard: React.FC<FlashcardProps> = ({
               <div className="text-4xl md:text-6xl font-bold mb-4 text-foreground">
                 {question.answerText}
               </div>
-              <div className="text-sm text-muted-foreground mt-2">
-                Tap to see question
-              </div>
+              
+              {!hasAnswered && (
+                <div className="text-sm text-muted-foreground mt-2">
+                  Tap to see question
+                </div>
+              )}
             </div>
           </div>
         </div>
       </div>
+
+      {/* Answer Input Form */}
+      <AnswerInput 
+        correctAnswer={question.answer}
+        onCorrectAnswer={onCorrectAnswer}
+        onWrongAnswer={onWrongAnswer}
+        onSubmit={handleAnswerSubmit}
+        isNewQuestion={isNewQuestion}
+      />
 
       {/* Navigation Controls */}
       <div className="flex justify-between items-center mt-6">
@@ -108,10 +136,10 @@ const Flashcard: React.FC<FlashcardProps> = ({
         
         <button
           onClick={handleNext}
-          disabled={!canGoNext}
+          disabled={!canGoNext || !hasAnswered}
           className={cn(
             "btn-elegant flex items-center gap-2 px-4 py-2",
-            !canGoNext && "opacity-50 cursor-not-allowed hover:scale-100"
+            (!canGoNext || !hasAnswered) && "opacity-50 cursor-not-allowed hover:scale-100"
           )}
         >
           <span>Next</span>
