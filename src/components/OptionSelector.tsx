@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { cn } from '@/lib/utils';
 import { Operation, Difficulty } from '@/utils/arithmeticUtils';
@@ -106,24 +107,24 @@ const OptionSelector: React.FC<OptionSelectorProps> = ({
         <div className="w-full bg-secondary rounded-full h-1.5 mb-6">
           <div 
             className="h-full bg-primary rounded-full transition-all duration-300"
-            style={{ width: `${(count / 20) * 100}%` }}
+            style={{ width: `${(count / 50) * 100}%` }}
           ></div>
         </div>
         <div className="text-center text-4xl font-bold mb-6">{count}</div>
         <input
           type="range"
           min="5"
-          max="20"
-          step="5"
+          max="50"
+          step="1"
           value={count}
           onChange={(e) => onSelectCount(parseInt(e.target.value))}
           className="w-full accent-primary"
         />
         <div className="flex justify-between text-sm text-muted-foreground">
           <span>5</span>
-          <span>10</span>
           <span>15</span>
-          <span>20</span>
+          <span>30</span>
+          <span>50</span>
         </div>
         <button 
           className="btn-elegant mt-6 w-full"
