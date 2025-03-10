@@ -1,8 +1,7 @@
-
 import React from 'react';
 import { cn } from '@/lib/utils';
 import { Operation, Difficulty } from '@/utils/arithmeticUtils';
-import { Plus, Minus, X, Divide } from 'lucide-react';
+import { Plus, Minus, X, Divide, Shuffle } from 'lucide-react';
 
 interface OptionSelectorProps {
   step: 'operation' | 'difficulty' | 'count';
@@ -30,7 +29,7 @@ const OptionSelector: React.FC<OptionSelectorProps> = ({
       <h2 className="text-sm uppercase tracking-wider text-muted-foreground mb-3 font-medium">
         Choose an operation
       </h2>
-      <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
+      <div className="grid grid-cols-2 gap-4 md:grid-cols-5">
         <OperationButton 
           operation="addition"
           icon={<Plus className="w-6 h-6" />}
@@ -58,6 +57,13 @@ const OptionSelector: React.FC<OptionSelectorProps> = ({
           label="Division"
           isSelected={selectedOperation === "division"}
           onClick={() => onSelectOperation("division")}
+        />
+        <OperationButton 
+          operation="all"
+          icon={<Shuffle className="w-6 h-6" />}
+          label="Mixed"
+          isSelected={selectedOperation === "all"}
+          onClick={() => onSelectOperation("all")}
         />
       </div>
     </div>

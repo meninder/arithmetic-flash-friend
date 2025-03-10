@@ -1,5 +1,5 @@
 
-export type Operation = 'addition' | 'subtraction' | 'multiplication' | 'division';
+export type Operation = 'addition' | 'subtraction' | 'multiplication' | 'division' | 'all';
 export type Difficulty = 'easy' | 'medium' | 'hard';
 
 export interface ArithmeticQuestion {
@@ -16,11 +16,20 @@ const getRandomNumber = (min: number, max: number): number => {
   return Math.floor(Math.random() * (max - min + 1)) + min;
 };
 
+const getRandomOperation = (): Exclude<Operation, 'all'> => {
+  const operations: Exclude<Operation, 'all'>[] = ['addition', 'subtraction', 'multiplication', 'division'];
+  const randomIndex = Math.floor(Math.random() * operations.length);
+  return operations[randomIndex];
+};
+
 const getDifficultyRange = (
   difficulty: Difficulty,
   operation: Operation
 ): { min1: number; max1: number; min2: number; max2: number } => {
-  switch (operation) {
+  // For 'all' operation, we'll get a random operation first
+  const actualOperation = operation === 'all' ? getRandomOperation() : operation;
+  
+  switch (actualOperation) {
     case 'addition':
       switch (difficulty) {
         case 'easy': return { min1: 1, max1: 10, min2: 1, max2: 10 };
@@ -61,6 +70,7 @@ const getOperationSymbol = (operation: Operation): string => {
     case 'subtraction': return '−';
     case 'multiplication': return '×';
     case 'division': return '÷';
+    case 'all': return '?'; // This shouldn't be used directly, but just in case
   }
 };
 
@@ -70,17 +80,20 @@ export const generateQuestions = (
   count: number
 ): ArithmeticQuestion[] => {
   const questions: ArithmeticQuestion[] = [];
-  const range = getDifficultyRange(difficulty, operation);
   
   for (let i = 0; i < count; i++) {
+    // For 'all' operation, pick a random operation for each question
+    const actualOperation = operation === 'all' ? getRandomOperation() : operation;
+    const range = getDifficultyRange(difficulty, actualOperation);
+    
     let num1: number, num2: number, answer: number;
     
-    if (operation === 'division') {
+    if (actualOperation === 'division') {
       // For division, we want clean results (whole numbers)
       num2 = getRandomNumber(range.min2, range.max2);
       answer = getRandomNumber(1, Math.floor(range.max1 / num2));
       num1 = num2 * answer;
-    } else if (operation === 'subtraction') {
+    } else if (actualOperation === 'subtraction') {
       // For subtraction, ensure num1 > num2
       num1 = getRandomNumber(range.min1, range.max1);
       num2 = getRandomNumber(range.min2, Math.min(num1, range.max2));
@@ -89,7 +102,7 @@ export const generateQuestions = (
       num1 = getRandomNumber(range.min1, range.max1);
       num2 = getRandomNumber(range.min2, range.max2);
       
-      switch (operation) {
+      switch (actualOperation) {
         case 'addition':
           answer = num1 + num2;
           break;
@@ -101,13 +114,13 @@ export const generateQuestions = (
       }
     }
     
-    const symbol = getOperationSymbol(operation);
+    const symbol = getOperationSymbol(actualOperation);
     
     questions.push({
       id: i + 1,
       num1,
       num2,
-      operation,
+      operation: actualOperation, // Store the actual operation used
       answer,
       questionText: `${num1} ${symbol} ${num2} = ?`,
       answerText: `${num1} ${symbol} ${num2} = ${answer}`
