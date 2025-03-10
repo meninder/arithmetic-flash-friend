@@ -72,8 +72,43 @@ const Flashcard: React.FC<FlashcardProps> = ({
     setHasAnswered(true);
   };
 
+  const handleFlipFromSubmit = () => {
+    if (!isAnimating) {
+      setIsAnimating(true);
+      setIsFlipped(true);
+      setTimeout(() => setIsAnimating(false), 600);
+    }
+  };
+
   return (
     <div className="w-full max-w-md mx-auto">
+      <div className="flex items-center justify-between w-full mb-6">
+        {/* Navigation Controls - Now on sides of the card */}
+        <button
+          onClick={handlePrevious}
+          disabled={!canGoPrevious}
+          className={cn(
+            "btn-elegant flex items-center gap-2 px-4 py-2",
+            !canGoPrevious && "opacity-50 cursor-not-allowed hover:scale-100"
+          )}
+        >
+          <ArrowLeft className="w-4 h-4" />
+          <span className="hidden sm:inline">Previous</span>
+        </button>
+        
+        <button
+          onClick={handleNext}
+          disabled={!canGoNext || !hasAnswered}
+          className={cn(
+            "btn-elegant flex items-center gap-2 px-4 py-2",
+            (!canGoNext || !hasAnswered) && "opacity-50 cursor-not-allowed hover:scale-100"
+          )}
+        >
+          <span className="hidden sm:inline">Next</span>
+          <ArrowRight className="w-4 h-4" />
+        </button>
+      </div>
+      
       <div 
         className={cn("card-flip-container aspect-[4/3] w-full", hasAnswered && "pointer-events-none")}
         onClick={handleFlip}
@@ -118,34 +153,8 @@ const Flashcard: React.FC<FlashcardProps> = ({
         onWrongAnswer={onWrongAnswer}
         onSubmit={handleAnswerSubmit}
         isNewQuestion={isNewQuestion}
+        onFlipCard={handleFlipFromSubmit}
       />
-
-      {/* Navigation Controls */}
-      <div className="flex justify-between items-center mt-6">
-        <button
-          onClick={handlePrevious}
-          disabled={!canGoPrevious}
-          className={cn(
-            "btn-elegant flex items-center gap-2 px-4 py-2",
-            !canGoPrevious && "opacity-50 cursor-not-allowed hover:scale-100"
-          )}
-        >
-          <ArrowLeft className="w-4 h-4" />
-          <span>Previous</span>
-        </button>
-        
-        <button
-          onClick={handleNext}
-          disabled={!canGoNext || !hasAnswered}
-          className={cn(
-            "btn-elegant flex items-center gap-2 px-4 py-2",
-            (!canGoNext || !hasAnswered) && "opacity-50 cursor-not-allowed hover:scale-100"
-          )}
-        >
-          <span>Next</span>
-          <ArrowRight className="w-4 h-4" />
-        </button>
-      </div>
     </div>
   );
 };

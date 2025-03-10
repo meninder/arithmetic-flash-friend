@@ -9,6 +9,7 @@ interface AnswerInputProps {
   onWrongAnswer: () => void;
   onSubmit: () => void;
   isNewQuestion: boolean;
+  onFlipCard: () => void;
 }
 
 const AnswerInput: React.FC<AnswerInputProps> = ({
@@ -16,7 +17,8 @@ const AnswerInput: React.FC<AnswerInputProps> = ({
   onCorrectAnswer,
   onWrongAnswer,
   onSubmit,
-  isNewQuestion
+  isNewQuestion,
+  onFlipCard
 }) => {
   const [userAnswer, setUserAnswer] = useState('');
   const [isCorrect, setIsCorrect] = useState<boolean | null>(null);
@@ -49,6 +51,7 @@ const AnswerInput: React.FC<AnswerInputProps> = ({
     }
     
     onSubmit();
+    onFlipCard(); // Flip the card when answer is submitted
   };
 
   return (
@@ -56,7 +59,7 @@ const AnswerInput: React.FC<AnswerInputProps> = ({
       <div className="flex flex-col space-y-2">
         <div className="flex space-x-2">
           <input
-            type="number"
+            type="text"
             value={userAnswer}
             onChange={(e) => !hasSubmitted && setUserAnswer(e.target.value)}
             placeholder="Enter your answer"
