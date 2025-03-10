@@ -32,7 +32,7 @@ const getDifficultyRange = (
   switch (actualOperation) {
     case 'addition':
       switch (difficulty) {
-        case 'easy': return { min1: 1, max1: 10, min2: 1, max2: 10 };
+        case 'easy': return { min1: 3, max1: 10, min2: 1, max2: 10 };
         case 'medium': return { min1: 10, max1: 50, min2: 10, max2: 50 };
         case 'hard': return { min1: 50, max1: 100, min2: 50, max2: 100 };
       }
@@ -46,16 +46,16 @@ const getDifficultyRange = (
       break;
     case 'multiplication':
       switch (difficulty) {
-        case 'easy': return { min1: 1, max1: 5, min2: 1, max2: 5 };
-        case 'medium': return { min1: 5, max1: 12, min2: 5, max2: 12 };
-        case 'hard': return { min1: 10, max1: 20, min2: 10, max2: 20 };
+        case 'easy': return { min1: 1, max1: 4, min2: 1, max2: 4 };
+        case 'medium': return { min1: 1, max1: 8, min2: 1, max2: 8 };
+        case 'hard': return { min1: 4, max1: 12, min2: 4, max2: 12 };
       }
       break;
     case 'division':
       switch (difficulty) {
-        case 'easy': return { min1: 1, max1: 25, min2: 1, max2: 5 };
-        case 'medium': return { min1: 20, max1: 50, min2: 2, max2: 10 };
-        case 'hard': return { min1: 50, max1: 100, min2: 5, max2: 20 };
+        case 'easy': return { min1: 1, max1: 25, min2: 1, max2: 4 };
+        case 'medium': return { min1: 20, max1: 70, min2: 2, max2: 8 };
+        case 'hard': return { min1: 50, max1: 100, min2: 5, max2: 12 };
       }
       break;
   }
