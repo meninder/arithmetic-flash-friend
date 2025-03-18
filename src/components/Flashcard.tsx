@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { cn } from '@/lib/utils';
 import { ArithmeticQuestion } from '@/utils/arithmeticUtils';
@@ -63,16 +62,16 @@ const Flashcard: React.FC<FlashcardProps> = ({
       }
     } 
     
-    if ((canGoNext || !canGoNext && hasAnswered) && !isAnimating && hasAnswered) {
-      // If we've already answered, proceed to next question after a short delay
-      // The !canGoNext && hasAnswered condition handles the last question case
+    if (hasAnswered && !isAnimating) {
+      // If we've already answered, proceed to next question or summary screen
       setIsSubmitting(true); // Set submitting state to disable button
       setTimeout(() => {
         setIsAnimating(true);
         setIsFlipped(false);
         setTimeout(() => {
-          onNext();
+          onNext(); // This will navigate to next question or summary screen
           setIsAnimating(false);
+          setIsSubmitting(false);
         }, 300);
       }, 1000); // Wait 1 second before moving to the next question
     }
@@ -93,18 +92,18 @@ const Flashcard: React.FC<FlashcardProps> = ({
   const handleAnswerSubmit = () => {
     setHasAnswered(true);
     // Automatically trigger the next question after a short delay
-    if (canGoNext) {
+    setTimeout(() => {
       setIsSubmitting(true); // Set submitting state to disable button
       setTimeout(() => {
         setIsAnimating(true);
         setIsFlipped(false);
         setTimeout(() => {
-          onNext();
+          onNext(); // Go to next question or summary screen
           setIsAnimating(false);
           setIsSubmitting(false); // Reset submitting state after animation
         }, 300);
       }, 2000); // Wait 2 seconds before moving to the next question
-    }
+    }, 0);
   };
 
   const handleFlipFromSubmit = () => {
@@ -121,7 +120,6 @@ const Flashcard: React.FC<FlashcardProps> = ({
 
   // Determine if the submit button should be disabled
   const isSubmitDisabled = 
-    (!canGoNext && !hasAnswered) || // Not the last question and hasn't answered
     (!hasAnswered && !userInputValue) || // No answer input
     isSubmitting; // Currently submitting
 
