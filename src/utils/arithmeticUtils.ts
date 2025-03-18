@@ -90,12 +90,12 @@ export const generateQuestions = (
     let num1: number, num2: number, answer: number;
     
     if (actualOperation === 'division') {
-      num2 = getRandomNumber(range.min2, range.max2);
-      answer = getRandomNumber(range.min1, range.max1);
-      num1 = num2 * answer;
-      if (answer < num2) {
-        [num1, num2] = [num2, num1];
-      }
+      num1 = getRandomNumber(range.min1, range.max1); //3
+      num2 = getRandomNumber(range.min2, range.max2); //4
+      let product = num1 * num2; //12
+      answer = num1; //3
+      num1 = product; //12
+
     } else if (actualOperation === 'subtraction') {
       // For subtraction, ensure num1 > num2
       num1 = getRandomNumber(range.min1, range.max1);
