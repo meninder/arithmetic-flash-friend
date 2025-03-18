@@ -1,3 +1,4 @@
+import { max } from "date-fns";
 
 export type Operation = 'addition' | 'subtraction' | 'multiplication' | 'division' | 'all';
 export type Difficulty = 'easy' | 'medium' | 'hard';
@@ -46,16 +47,16 @@ const getDifficultyRange = (
       break;
     case 'multiplication':
       switch (difficulty) {
-        case 'easy': return { min1: 1, max1: 4, min2: 1, max2: 4 };
-        case 'medium': return { min1: 1, max1: 8, min2: 1, max2: 8 };
+        case 'easy': return { min1: 2, max1: 4, min2: 2, max2: 4 };
+        case 'medium': return { min1: 2, max1: 8, min2: 2, max2: 8 };
         case 'hard': return { min1: 4, max1: 12, min2: 4, max2: 12 };
       }
       break;
     case 'division':
       switch (difficulty) {
-        case 'easy': return { min1: 1, max1: 25, min2: 1, max2: 4 };
-        case 'medium': return { min1: 20, max1: 70, min2: 2, max2: 8 };
-        case 'hard': return { min1: 50, max1: 100, min2: 5, max2: 12 };
+        case 'easy': return { min1: 2, max1: 4, min2: 2, max2: 4 };
+        case 'medium': return { min1: 2, max1: 8, min2: 2, max2: 8 };
+        case 'hard': return { min1: 4, max1: 12, min2: 4, max2: 12 };
       }
       break;
   }
@@ -89,10 +90,12 @@ export const generateQuestions = (
     let num1: number, num2: number, answer: number;
     
     if (actualOperation === 'division') {
-      // For division, we want clean results (whole numbers)
       num2 = getRandomNumber(range.min2, range.max2);
-      answer = getRandomNumber(1, Math.floor(range.max1 / num2));
+      answer = getRandomNumber(range.min1, range.max1);
       num1 = num2 * answer;
+      if (answer < num2) {
+        [num1, num2] = [num2, num1];
+      }
     } else if (actualOperation === 'subtraction') {
       // For subtraction, ensure num1 > num2
       num1 = getRandomNumber(range.min1, range.max1);
