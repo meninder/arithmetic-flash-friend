@@ -29,11 +29,13 @@ const Flashcard: React.FC<FlashcardProps> = ({
   const [isFlipped, setIsFlipped] = useState(false);
   const [isAnimating, setIsAnimating] = useState(false);
   const [hasAnswered, setHasAnswered] = useState(false);
+  const [userInputValue, setUserInputValue] = useState('');
 
   // Reset state when question changes
   useEffect(() => {
     setIsFlipped(false);
     setHasAnswered(false);
+    setUserInputValue('');
   }, [question]);
 
   const handleFlip = () => {
@@ -78,6 +80,10 @@ const Flashcard: React.FC<FlashcardProps> = ({
       setIsFlipped(true);
       setTimeout(() => setIsAnimating(false), 600);
     }
+  };
+
+  const handleInputChange = (value: string) => {
+    setUserInputValue(value);
   };
 
   return (
@@ -138,7 +144,8 @@ const Flashcard: React.FC<FlashcardProps> = ({
           disabled={!canGoNext || !hasAnswered}
           className={cn(
             "btn-elegant flex items-center gap-2 px-4 py-2",
-            (!canGoNext || !hasAnswered) && "opacity-50 cursor-not-allowed hover:scale-100"
+            (!canGoNext || !hasAnswered) && 
+              (userInputValue ? "opacity-100 cursor-pointer hover:scale-105" : "opacity-50 cursor-not-allowed hover:scale-100")
           )}
         >
           <span className="hidden sm:inline">Submit</span>
@@ -154,6 +161,7 @@ const Flashcard: React.FC<FlashcardProps> = ({
         onSubmit={handleAnswerSubmit}
         isNewQuestion={isNewQuestion}
         onFlipCard={handleFlipFromSubmit}
+        onInputChange={handleInputChange}
       />
     </div>
   );

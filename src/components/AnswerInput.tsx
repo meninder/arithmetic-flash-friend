@@ -10,6 +10,7 @@ interface AnswerInputProps {
   onSubmit: () => void;
   isNewQuestion: boolean;
   onFlipCard: () => void;
+  onInputChange?: (value: string) => void;
 }
 
 const AnswerInput: React.FC<AnswerInputProps> = ({
@@ -18,7 +19,8 @@ const AnswerInput: React.FC<AnswerInputProps> = ({
   onWrongAnswer,
   onSubmit,
   isNewQuestion,
-  onFlipCard
+  onFlipCard,
+  onInputChange
 }) => {
   const [userAnswer, setUserAnswer] = useState('');
   const [isCorrect, setIsCorrect] = useState<boolean | null>(null);
@@ -54,6 +56,14 @@ const AnswerInput: React.FC<AnswerInputProps> = ({
     onFlipCard(); // Flip the card when answer is submitted
   };
 
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    setUserAnswer(value);
+    if (onInputChange) {
+      onInputChange(value);
+    }
+  };
+
   return (
     <form onSubmit={handleSubmit} className="w-full mt-4">
       <div className="flex flex-col space-y-2">
@@ -61,7 +71,7 @@ const AnswerInput: React.FC<AnswerInputProps> = ({
           <input
             type="text"
             value={userAnswer}
-            onChange={(e) => !hasSubmitted && setUserAnswer(e.target.value)}
+            onChange={handleInputChange}
             placeholder="Enter your answer"
             className={cn(
               "flex-1 p-3 rounded-lg border text-center text-xl font-medium",
