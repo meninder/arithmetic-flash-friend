@@ -48,13 +48,28 @@ const Flashcard: React.FC<FlashcardProps> = ({
 
   const handleNext = (e: React.MouseEvent) => {
     e.stopPropagation();
-    if (canGoNext && !isAnimating) {
-      setIsAnimating(true);
-      setIsFlipped(false);
+    
+    if (!hasAnswered && userInputValue) {
+      // If we haven't answered yet but have input, trigger answer submission first
+      const answerInput = document.querySelector('input[type="text"]') as HTMLInputElement;
+      const form = answerInput?.form;
+      if (form) {
+        const formEvent = new Event('submit', { cancelable: true, bubbles: true });
+        form.dispatchEvent(formEvent);
+        return; // Don't proceed with next question yet
+      }
+    } 
+    
+    if (canGoNext && !isAnimating && hasAnswered) {
+      // If we've already answered, proceed to next question after a short delay
       setTimeout(() => {
-        onNext();
-        setIsAnimating(false);
-      }, 300);
+        setIsAnimating(true);
+        setIsFlipped(false);
+        setTimeout(() => {
+          onNext();
+          setIsAnimating(false);
+        }, 300);
+      }, 1000); // Wait 1 second before moving to the next question
     }
   };
 
@@ -72,6 +87,17 @@ const Flashcard: React.FC<FlashcardProps> = ({
 
   const handleAnswerSubmit = () => {
     setHasAnswered(true);
+    // Automatically trigger the next question after a short delay
+    if (canGoNext) {
+      setTimeout(() => {
+        setIsAnimating(true);
+        setIsFlipped(false);
+        setTimeout(() => {
+          onNext();
+          setIsAnimating(false);
+        }, 300);
+      }, 2000); // Wait 2 seconds before moving to the next question
+    }
   };
 
   const handleFlipFromSubmit = () => {
@@ -141,11 +167,12 @@ const Flashcard: React.FC<FlashcardProps> = ({
         
         <button
           onClick={handleNext}
-          disabled={!canGoNext || !hasAnswered}
+          disabled={!canGoNext || (!hasAnswered && !userInputValue)}
           className={cn(
             "btn-elegant flex items-center gap-2 px-4 py-2",
-            (!canGoNext || !hasAnswered) && 
-              (userInputValue ? "opacity-100 cursor-pointer hover:scale-105" : "opacity-50 cursor-not-allowed hover:scale-100")
+            (!canGoNext || (!hasAnswered && !userInputValue)) ? 
+              "opacity-50 cursor-not-allowed hover:scale-100" : 
+              "opacity-100 cursor-pointer hover:scale-105"
           )}
         >
           <span className="hidden sm:inline">Submit</span>
