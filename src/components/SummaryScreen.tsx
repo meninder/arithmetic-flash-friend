@@ -1,6 +1,8 @@
 
 import React from 'react';
-import { ArrowLeft, RefreshCw, Trophy } from 'lucide-react';
+import { ArrowLeft, RefreshCw, Trophy, Plus, Minus, X, Divide } from 'lucide-react';
+import { ArithmeticQuestion } from '@/utils/arithmeticUtils';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from './ui/table';
 
 interface SummaryScreenProps {
   correctAnswers: number;
@@ -8,6 +10,7 @@ interface SummaryScreenProps {
   operation: string;
   difficulty: string;
   onReset: () => void;
+  questions: ArithmeticQuestion[];
 }
 
 const SummaryScreen: React.FC<SummaryScreenProps> = ({
@@ -15,7 +18,8 @@ const SummaryScreen: React.FC<SummaryScreenProps> = ({
   totalQuestions,
   operation,
   difficulty,
-  onReset
+  onReset,
+  questions
 }) => {
   const percentage = Math.round((correctAnswers / totalQuestions) * 100);
   
@@ -29,6 +33,15 @@ const SummaryScreen: React.FC<SummaryScreenProps> = ({
   } else {
     message = "Keep practicing!";
   }
+
+  // Helper function to get the operation icon
+  const getOperationIcon = (questionText: string) => {
+    if (questionText.includes('+')) return <Plus className="w-4 h-4 text-primary" />;
+    if (questionText.includes('-')) return <Minus className="w-4 h-4 text-primary" />;
+    if (questionText.includes('×') || questionText.includes('*')) return <X className="w-4 h-4 text-primary" />;
+    if (questionText.includes('÷') || questionText.includes('/')) return <Divide className="w-4 h-4 text-primary" />;
+    return null;
+  };
 
   return (
     <div className="animate-scale-up w-full max-w-md mx-auto">
@@ -48,7 +61,7 @@ const SummaryScreen: React.FC<SummaryScreenProps> = ({
           </div>
         </div>
         
-        <div className="space-y-2 mb-8">
+        <div className="space-y-2 mb-4">
           <div className="flex justify-between py-2 border-b">
             <span className="text-muted-foreground">Operation:</span>
             <span className="font-medium">{operation}</span>
@@ -60,6 +73,35 @@ const SummaryScreen: React.FC<SummaryScreenProps> = ({
           <div className="flex justify-between py-2 border-b">
             <span className="text-muted-foreground">Questions:</span>
             <span className="font-medium">{totalQuestions}</span>
+          </div>
+        </div>
+
+        <div className="mb-8">
+          <h3 className="font-medium text-lg mb-2">Questions Summary</h3>
+          <div className="max-h-60 overflow-y-auto rounded-md border">
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead className="w-12">#</TableHead>
+                  <TableHead>Question</TableHead>
+                  <TableHead className="text-right">Answer</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {questions.map((question, index) => (
+                  <TableRow key={index}>
+                    <TableCell className="font-medium">{index + 1}</TableCell>
+                    <TableCell>
+                      <div className="flex items-center gap-2">
+                        {getOperationIcon(question.questionText)}
+                        <span>{question.questionText}</span>
+                      </div>
+                    </TableCell>
+                    <TableCell className="text-right">{question.answerText}</TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
           </div>
         </div>
         

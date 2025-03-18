@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { useToast } from '@/hooks/use-toast';
 import OptionSelector from './OptionSelector';
@@ -23,7 +22,6 @@ const ArithmeticApp: React.FC = () => {
   const [isNewQuestion, setIsNewQuestion] = useState(true);
 
   useEffect(() => {
-    // Set initial load to false after first render
     setIsInitialLoad(false);
   }, []);
 
@@ -59,7 +57,6 @@ const ArithmeticApp: React.FC = () => {
       return;
     }
 
-    // Generate questions
     const generatedQuestions = generateQuestions(
       selectedOperation,
       selectedDifficulty,
@@ -82,7 +79,6 @@ const ArithmeticApp: React.FC = () => {
     if (currentQuestionIndex < questions.length - 1) {
       setCurrentQuestionIndex(prev => prev + 1);
     } else {
-      // Last question completed
       setStep('summary');
       toast({
         title: "Practice completed!",
@@ -211,6 +207,7 @@ const ArithmeticApp: React.FC = () => {
             operation={getOperationDisplayName(selectedOperation)}
             difficulty={getDifficultyDisplayName(selectedDifficulty)}
             onReset={handleReset}
+            questions={questions}
           />
         </div>
       )}
