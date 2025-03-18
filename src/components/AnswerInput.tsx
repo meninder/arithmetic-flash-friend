@@ -71,16 +71,6 @@ const AnswerInput: React.FC<AnswerInputProps> = ({
             disabled={hasSubmitted}
             autoFocus
           />
-          <button
-            type="submit"
-            disabled={hasSubmitted || !userAnswer}
-            className={cn(
-              "btn-elegant px-6",
-              (!userAnswer || hasSubmitted) && "opacity-50 cursor-not-allowed hover:scale-100"
-            )}
-          >
-            Submit
-          </button>
         </div>
         
         {hasSubmitted && (

@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import { cn } from '@/lib/utils';
 import { ArithmeticQuestion } from '@/utils/arithmeticUtils';
-import { ArrowRight, ArrowLeft } from 'lucide-react';
+import { ArrowRight, ArrowLeft, CheckCircle } from 'lucide-react';
 import AnswerInput from './AnswerInput';
 
 interface FlashcardProps {
@@ -141,8 +141,8 @@ const Flashcard: React.FC<FlashcardProps> = ({
             (!canGoNext || !hasAnswered) && "opacity-50 cursor-not-allowed hover:scale-100"
           )}
         >
-          <span className="hidden sm:inline">Next</span>
-          <ArrowRight className="w-4 h-4" />
+          <span className="hidden sm:inline">Submit</span>
+          <CheckCircle className="w-4 h-4" />
         </button>
       </div>
 

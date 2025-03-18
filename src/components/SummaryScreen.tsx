@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { ArrowLeft } from 'lucide-react';
+import { ArrowLeft, RefreshCw, Trophy } from 'lucide-react';
 
 interface SummaryScreenProps {
   correctAnswers: number;
@@ -36,10 +36,15 @@ const SummaryScreen: React.FC<SummaryScreenProps> = ({
         <h2 className="text-2xl font-bold text-center mb-6">Practice Complete!</h2>
         
         <div className="text-center mb-8">
-          <div className="text-6xl font-bold text-primary mb-2">{percentage}%</div>
+          <div className="w-32 h-32 mx-auto bg-primary/10 border-4 border-primary rounded-full flex items-center justify-center mb-4">
+            <div className="text-center">
+              <Trophy className="w-8 h-8 text-primary mx-auto mb-1" />
+              <div className="text-5xl font-bold text-primary">{percentage}%</div>
+            </div>
+          </div>
           <div className="text-xl font-medium mb-1">{message}</div>
           <div className="text-muted-foreground">
-            You got {correctAnswers} out of {totalQuestions} questions correct
+            You got <span className="font-bold text-primary">{correctAnswers}</span> out of <span className="font-medium">{totalQuestions}</span> questions correct
           </div>
         </div>
         
@@ -60,9 +65,9 @@ const SummaryScreen: React.FC<SummaryScreenProps> = ({
         
         <button 
           onClick={onReset}
-          className="btn-elegant w-full flex items-center justify-center gap-2"
+          className="btn-elegant w-full flex items-center justify-center gap-2 py-3"
         >
-          <ArrowLeft className="w-4 h-4" />
+          <RefreshCw className="w-5 h-5" />
           <span>Practice Again</span>
         </button>
       </div>
