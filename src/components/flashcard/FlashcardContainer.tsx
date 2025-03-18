@@ -1,11 +1,11 @@
 
-import React, { useState, useEffect } from 'react';
-import { cn } from '@/lib/utils';
+import React from 'react';
 import { ArithmeticQuestion } from '@/utils/arithmeticUtils';
-import { CheckCircle } from 'lucide-react';
-import AnswerInput from './AnswerInput';
+import FlashcardDisplay from './FlashcardDisplay';
+import FlashcardControls from './FlashcardControls';
+import AnswerInput from '../AnswerInput';
 
-interface FlashcardProps {
+interface FlashcardContainerProps {
   question: ArithmeticQuestion;
   onNext: () => void;
   onPrevious: () => void;
@@ -16,7 +16,7 @@ interface FlashcardProps {
   isNewQuestion: boolean;
 }
 
-const Flashcard: React.FC<FlashcardProps> = ({
+const FlashcardContainer: React.FC<FlashcardContainerProps> = ({
   question,
   onNext,
   onPrevious,
@@ -26,14 +26,14 @@ const Flashcard: React.FC<FlashcardProps> = ({
   onWrongAnswer,
   isNewQuestion
 }) => {
-  const [isFlipped, setIsFlipped] = useState(false);
-  const [isAnimating, setIsAnimating] = useState(false);
-  const [hasAnswered, setHasAnswered] = useState(false);
-  const [userInputValue, setUserInputValue] = useState('');
-  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isFlipped, setIsFlipped] = React.useState(false);
+  const [isAnimating, setIsAnimating] = React.useState(false);
+  const [hasAnswered, setHasAnswered] = React.useState(false);
+  const [userInputValue, setUserInputValue] = React.useState('');
+  const [isSubmitting, setIsSubmitting] = React.useState(false);
 
   // Reset state when question changes
-  useEffect(() => {
+  React.useEffect(() => {
     setIsFlipped(false);
     setHasAnswered(false);
     setUserInputValue('');
@@ -115,60 +115,19 @@ const Flashcard: React.FC<FlashcardProps> = ({
   return (
     <div className="w-full max-w-md mx-auto">
       <div className="flex items-center justify-center gap-4 w-full mb-6">
-        {/* Card and Submit button with adjusted layout */}
-        <div 
-          className={cn("card-flip-container aspect-[4/3] w-full", hasAnswered && "pointer-events-none")}
+        <FlashcardDisplay 
+          question={question}
+          isFlipped={isFlipped}
+          hasAnswered={hasAnswered}
           onClick={handleFlip}
-        >
-          <div className={cn("card-flip w-full h-full", isFlipped && "flipped")}>
-            {/* Card Front */}
-            <div className="card-front w-full h-full">
-              <div className="glass w-full h-full rounded-2xl shadow-soft p-8 flex flex-col items-center justify-center cursor-pointer select-none">
-                <div className="text-4xl md:text-6xl font-bold mb-4 text-foreground">
-                  {question.questionText}
-                </div>
-                
-                {!hasAnswered && (
-                  <div className="text-sm text-muted-foreground mt-2">
-                    {isFlipped ? "Tap to see question" : "Tap to see answer"}
-                  </div>
-                )}
-              </div>
-            </div>
-            
-            {/* Card Back */}
-            <div className="card-back w-full h-full">
-              <div className="glass w-full h-full rounded-2xl shadow-soft p-8 flex flex-col items-center justify-center cursor-pointer select-none">
-                <div className="text-4xl md:text-6xl font-bold mb-4 text-foreground">
-                  {question.answerText}
-                </div>
-                
-                {!hasAnswered && (
-                  <div className="text-sm text-muted-foreground mt-2">
-                    Tap to see question
-                  </div>
-                )}
-              </div>
-            </div>
-          </div>
-        </div>
+        />
         
-        <button
-          onClick={handleNext}
-          disabled={isSubmitDisabled}
-          className={cn(
-            "btn-elegant flex items-center gap-2 px-4 py-2",
-            isSubmitDisabled ? 
-              "opacity-50 cursor-not-allowed hover:scale-100" : 
-              "opacity-100 cursor-pointer hover:scale-105"
-          )}
-        >
-          <span className="hidden sm:inline">Submit</span>
-          <CheckCircle className="w-4 h-4" />
-        </button>
+        <FlashcardControls 
+          onSubmit={handleNext}
+          isDisabled={isSubmitDisabled}
+        />
       </div>
 
-      {/* Answer Input Form */}
       <AnswerInput 
         correctAnswer={question.answer}
         onCorrectAnswer={onCorrectAnswer}
@@ -182,4 +141,4 @@ const Flashcard: React.FC<FlashcardProps> = ({
   );
 };
 
-export default Flashcard;
+export default FlashcardContainer;

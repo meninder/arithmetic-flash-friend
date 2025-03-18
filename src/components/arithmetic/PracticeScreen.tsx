@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { useArithmetic } from '@/contexts/ArithmeticContext';
-import Flashcard from '../Flashcard';
+import Flashcard from '../flashcard';
 import ProgressBar from '../ProgressBar';
 import ScoreDisplay from '../ScoreDisplay';
 
