@@ -30,12 +30,14 @@ const Flashcard: React.FC<FlashcardProps> = ({
   const [isAnimating, setIsAnimating] = useState(false);
   const [hasAnswered, setHasAnswered] = useState(false);
   const [userInputValue, setUserInputValue] = useState('');
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   // Reset state when question changes
   useEffect(() => {
     setIsFlipped(false);
     setHasAnswered(false);
     setUserInputValue('');
+    setIsSubmitting(false);
   }, [question]);
 
   const handleFlip = () => {
@@ -51,6 +53,7 @@ const Flashcard: React.FC<FlashcardProps> = ({
     
     if (!hasAnswered && userInputValue) {
       // If we haven't answered yet but have input, trigger answer submission first
+      setIsSubmitting(true); // Set submitting state to disable button
       const answerInput = document.querySelector('input[type="text"]') as HTMLInputElement;
       const form = answerInput?.form;
       if (form) {
@@ -60,8 +63,10 @@ const Flashcard: React.FC<FlashcardProps> = ({
       }
     } 
     
-    if (canGoNext && !isAnimating && hasAnswered) {
+    if ((canGoNext || !canGoNext && hasAnswered) && !isAnimating && hasAnswered) {
       // If we've already answered, proceed to next question after a short delay
+      // The !canGoNext && hasAnswered condition handles the last question case
+      setIsSubmitting(true); // Set submitting state to disable button
       setTimeout(() => {
         setIsAnimating(true);
         setIsFlipped(false);
@@ -89,12 +94,14 @@ const Flashcard: React.FC<FlashcardProps> = ({
     setHasAnswered(true);
     // Automatically trigger the next question after a short delay
     if (canGoNext) {
+      setIsSubmitting(true); // Set submitting state to disable button
       setTimeout(() => {
         setIsAnimating(true);
         setIsFlipped(false);
         setTimeout(() => {
           onNext();
           setIsAnimating(false);
+          setIsSubmitting(false); // Reset submitting state after animation
         }, 300);
       }, 2000); // Wait 2 seconds before moving to the next question
     }
@@ -111,6 +118,12 @@ const Flashcard: React.FC<FlashcardProps> = ({
   const handleInputChange = (value: string) => {
     setUserInputValue(value);
   };
+
+  // Determine if the submit button should be disabled
+  const isSubmitDisabled = 
+    (!canGoNext && !hasAnswered) || // Not the last question and hasn't answered
+    (!hasAnswered && !userInputValue) || // No answer input
+    isSubmitting; // Currently submitting
 
   return (
     <div className="w-full max-w-md mx-auto">
@@ -167,10 +180,10 @@ const Flashcard: React.FC<FlashcardProps> = ({
         
         <button
           onClick={handleNext}
-          disabled={!canGoNext || (!hasAnswered && !userInputValue)}
+          disabled={isSubmitDisabled}
           className={cn(
             "btn-elegant flex items-center gap-2 px-4 py-2",
-            (!canGoNext || (!hasAnswered && !userInputValue)) ? 
+            isSubmitDisabled ? 
               "opacity-50 cursor-not-allowed hover:scale-100" : 
               "opacity-100 cursor-pointer hover:scale-105"
           )}
