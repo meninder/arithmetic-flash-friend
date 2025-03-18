@@ -1,7 +1,8 @@
+
 import React, { useState, useEffect } from 'react';
 import { cn } from '@/lib/utils';
 import { ArithmeticQuestion } from '@/utils/arithmeticUtils';
-import { ArrowRight, ArrowLeft, CheckCircle } from 'lucide-react';
+import { CheckCircle } from 'lucide-react';
 import AnswerInput from './AnswerInput';
 
 interface FlashcardProps {
@@ -77,18 +78,6 @@ const Flashcard: React.FC<FlashcardProps> = ({
     }
   };
 
-  const handlePrevious = (e: React.MouseEvent) => {
-    e.stopPropagation();
-    if (canGoPrevious && !isAnimating) {
-      setIsAnimating(true);
-      setIsFlipped(false);
-      setTimeout(() => {
-        onPrevious();
-        setIsAnimating(false);
-      }, 300);
-    }
-  };
-
   const handleAnswerSubmit = () => {
     setHasAnswered(true);
     // Automatically trigger the next question after a short delay
@@ -126,19 +115,7 @@ const Flashcard: React.FC<FlashcardProps> = ({
   return (
     <div className="w-full max-w-md mx-auto">
       <div className="flex items-center justify-center gap-4 w-full mb-6">
-        {/* Navigation Controls on the sides of the card */}
-        <button
-          onClick={handlePrevious}
-          disabled={!canGoPrevious}
-          className={cn(
-            "btn-elegant flex items-center gap-2 px-4 py-2",
-            !canGoPrevious && "opacity-50 cursor-not-allowed hover:scale-100"
-          )}
-        >
-          <ArrowLeft className="w-4 h-4" />
-          <span className="hidden sm:inline">Previous</span>
-        </button>
-        
+        {/* Card and Submit button with adjusted layout */}
         <div 
           className={cn("card-flip-container aspect-[4/3] w-full", hasAnswered && "pointer-events-none")}
           onClick={handleFlip}
